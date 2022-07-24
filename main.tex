@@ -1,0 +1,124 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb}
+\title{dials rotations}
+%\author{Elena Pascal}
+\date{November 2021}
+
+\begin{document}
+
+\maketitle
+
+\section{Passive transformations}
+\subsection{Basis vector transformation}
+Let us consider two reference frames (these can be crystallographic or not) one with basis vectors $\mathbf{a}$ and  another with basis vectors $\mathbf{b}$. The frames are related through a linear relation we call coordinate transformation and it is given usually as a square $3\times3$ matrix $\mathcal{T}$. Note that we usually call this transformation \textit{passive} since it acts on the coordinate frame and not the object. The form of the new basis vectors $\mathbf{b}$ knowing the old basis vectors $\mathbf{a}$ and the transformation $\mathcal{T}$ is just:
+\begin{equation}
+    \mathbf{b}_{i} = \mathcal{T}_{ij} \mathbf{a}_j
+\end{equation}
+
+The inverse relation must also exist and is given by the inverse of the transformation $\mathcal{T}$:
+\begin{equation}
+    \mathbf{a}_{i} = \mathcal{T}^{-1}_{ij} \mathbf{b}_j
+\end{equation}
+
+\subsection{Vector coordinates transformation} 
+Consider now a vector $\mathbf{v}$ which can be described in both reference frames:
+\begin{equation}
+    \mathbf{v} = v^a_j \mathbf{a}_j = v^b_i \mathbf{b}_i 
+\end{equation}
+
+Yes, the two forms use different index letters for no apparent reason. It will become clear why below.
+We now the eq. (1) to replace the basis vectors $\mathbf{b}$.
+\begin{equation}
+    v^a_j \mathbf{a}_j = v^b_i \mathcal{T}_{ij} \mathbf{a}_j
+\end{equation}
+
+How convenient, the basis vector $\mathbf{a}$ drops out. We can rewrite the above (with more pleasing indexes) and read it as vector transformation from an new frame with basis set $\mathbf{b}$ to an old one with basis set $\mathbf{a}$ knowing the transformation $\mathbf{T}$ between them:
+\begin{equation}
+    v^a_j = v^b_i \mathcal{T}_{ij}
+\end{equation}
+
+Do note the order of operations, it is not the same as in eq.(2). Similarly, we can write the vector transformation from the old to the new frame:
+\begin{equation}
+    v^b_j = v^a_i \mathcal{T}^{-1}_{ij}
+\end{equation}
+
+
+
+\subsection{Tensor transformation}
+The direct metric tensor $\mathbf{G}$ (the tensor that contains the lattice parameters in real space and that transforms a crystal frame to a Cartesian one) is a special type of transformation. There are circumstances when we want to find the metric tensor after a basis set is transformed.
+
+$\mathbf{G}^b = \mathbf{b}_i \cdot \mathbf{b}_j$
+
+
+\section{Active transformation}
+\subsection{Vector coordinates transformation}
+
+
+\section{Rotations}
+We call an \textit{active rotation} an anticlockwise rotation of an object around a rotation axis as looking towards the base of the rotation vector (\textit{ie.} right hand rule).
+
+Goniometer rotations are active rotations of the sample around given rotation axes. It is useful at this point to differentiate between lab frame and sample frame. While the sample frame starts by being coincident with the lab frame at the beginning of the experiment, thought the experiment it will be in a position that is rotated with respect to the lab frame. What we usually need is to express a vector known in sample frame back to lab frame. This is a vector transformation from a new (rotated sample) coordinate frame to an old (lab) coordinate frame using knowledge of an active rotation between lab frame and sample frame $\mathcal{R}$.
+\begin{equation}
+    v_j^{lab}=\mathcal{R}^p_{ji} v_i^{sample}= (\mathcal{R}^a_{ji})^{-1} v_i^{sample}
+\end{equation}
+or in matrix form
+\begin{equation}
+    \mathbf{v}^{lab}=(\mathcal{R}^a)^{-1} \, \mathbf{v}^{sample}
+\end{equation}
+
+This is the bit that can be confusing. We have information about an active rotation, $\mathcal{R}^a$ of the sample object from being coincident with the lab frame to not being coincident. A vector living in the sample will suffer the same rotation from lab frame to sample frame. To get the information about the vector coordinates in lab frame knowing its coordinates in sample frame we must apply the inverse transform.
+
+
+
+
+
+
+\section{Diffractometer equation}
+
+Let's try to derive the diffractometer equation. A vector $\mathbf{h}$ with known indices in the reciprocal space, must also have a form in the real space Cartesian frame that describes the crystal:
+\begin{equation*}
+    \mathbf{h} = h_i \mathbf{a}^{*}_i = v^c_j \mathbf{e}_j
+\end{equation*}
+We can use the reciprocal space structure matrix to get a form for $v^c_j$:
+\begin{equation}
+    v^c_i = B_{ij}h_j
+\end{equation}
+
+Next we apply the rotation $\mathbf{U}$ that defines the passive transformation from sample frame to crystal frame. 
+\begin{equation}
+    v^s_j = v^c_i U_{ij}^{-1} = B_{in}h_n U_{ij}^{-1}
+\end{equation}
+And then the rotation $\mathbf{R}$ from lab frame to sample frame:
+\begin{equation}
+    v^l_j = v^s_i R_{ij}^{-1} = B_{mn}h_n U_{mi}^{-1} R_{ij}^{-1}
+\end{equation}
+
+Because $\mathbf{R}$ and $\mathbf{U}$ are rotations, their inverse is their transpose.
+\begin{equation*}
+    B^{-1}_{ij} = B_{ji} 
+\end{equation*}
+\begin{equation*}
+    U^{-1}_{ij} = U_{ji} 
+\end{equation*}
+we can reshuffle the indices and their positions:
+\begin{equation*}
+    v^l_j = R_{ji} U_{im}  B_{mn}   h_n
+\end{equation*}
+and end up with the usual diffractometer equation used in DIALS:
+\begin{equation}
+    (r_{\phi})= \mathbf{v}^l = \mathbf{R} \mathbf{U} \mathbf{B} \mathbf{h}
+\end{equation}
+
+where $\mathbf{r_{\phi}}$ is a vector in real space, $\mathbf{h}$ is a vector in reciprocal space. 
+The tensors are as follows:
+\begin{itemize}
+\item $\mathbf{B}$ is \textit{reciprocal space orthogonalisation matrix} or as I call it the \textit{reciprocal structure matrix} (this is the matrix that transforms the reciprocal crystal basis vectors to a well defined real space Cartesian frame basis vectors). This is a passive transformation by definition.
+
+\item $\mathbf{U}$ is the \textit{passive} rotation from sample frame to crystal frame. 
+
+\item $\mathbf{R}$ is the \textit{passive} rotation from lab frame to sample frame. 
+\end{itemize}
+
+
+\end{document}
